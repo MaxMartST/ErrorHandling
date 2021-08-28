@@ -1,44 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ExceptionHandling.Domain;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ErrorHandling.Controllers
+namespace ErrorHandling.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
+        private readonly IWeatherService _weatherService;
         private readonly ILogger<WeatherForecastController> _logger;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(
+            IWeatherService weatherService,
+            ILogger<WeatherForecastController> logger)
         {
+            _weatherService = weatherService;
             _logger = logger;
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get(string cityName)
+        public ActionResult<IEnumerable<WeatherForecast>> Get(string cityName)
         {
-            if (cityName == "Sydney")
-            {
-                throw new Exception("No weather data for Sydney");
-            }
-
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return _weatherService.Get(cityName).ToArray();
         }
     }
 }

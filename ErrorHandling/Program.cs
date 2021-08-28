@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ErrorHandling
+namespace ErrorHandling.Api
 {
     public class Program
     {

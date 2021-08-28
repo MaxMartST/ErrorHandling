@@ -1,3 +1,4 @@
+using ExceptionHandling.Domain;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,7 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ErrorHandling
+namespace ErrorHandling.Api
 {
     public class Startup
     {
@@ -26,7 +27,10 @@ namespace ErrorHandling
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IWeatherService, WeatherService>();
 
+            services.AddTransient<ExceptionHandlingMiddleware>();
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -47,6 +51,7 @@ namespace ErrorHandling
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseAuthorization();
 
