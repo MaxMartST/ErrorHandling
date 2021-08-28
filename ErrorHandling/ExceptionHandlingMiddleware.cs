@@ -1,4 +1,5 @@
-﻿using ExceptionHandling.Domain.MyExcption;
+﻿using ExceptionHandling.Domain.Models;
+using ExceptionHandling.Domain.MyExcption;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -17,20 +18,31 @@ namespace ErrorHandling.Api
                 await next(context);
             }
             catch (DomainNotFoundException e)
-            { 
+            {
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                await context.Response.WriteAsync(e.Message);
+                await HandleExceptionAsync(context, e);
             }
             catch (DomainValidationException e)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                await context.Response.WriteAsync(e.Message);
+                await HandleExceptionAsync(context, e);
             }
             catch (Exception e)
             {
                 context.Response.StatusCode = 500;
-                await context.Response.WriteAsync(e.Message);
+                await HandleExceptionAsync(context, e);
             }
+        }
+
+        private Task HandleExceptionAsync(HttpContext context, Exception exception)
+        {
+            context.Response.ContentType = "application/json";
+
+            return context.Response.WriteAsync(new ErrorDetails 
+            { 
+                StatusCode = context.Response.StatusCode,
+                Message = exception.Message
+            }.ToString());
         }
     }
 }

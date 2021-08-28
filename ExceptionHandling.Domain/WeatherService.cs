@@ -23,6 +23,7 @@ namespace ExceptionHandling.Domain
             if (cityName == "Sydney")
             {
                 throw new DomainNotFoundException("No weather data for Sydney");
+                //throw new DomainValidationException("Invalid name");
             }
 
             var rng = new Random();
